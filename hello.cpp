@@ -65,7 +65,7 @@ struct OpenVRApplication
 	uint32_t rtWidth;
 	uint32_t rtHeight;
 
-	OpenVRApplication() : 
+	OpenVRApplication() :
 		hmd(NULL),
 		rtWidth(0), rtHeight(0)
 	{
@@ -120,10 +120,10 @@ struct OpenVRApplication
 		/// seems to imply that we always want Gamma in opengl because linear is for framebuffers that have been
 		/// processed by DXGI...
 		vr::EColorSpace colorSpace = linear ? vr::ColorSpace_Linear : vr::ColorSpace_Gamma;
-		
-		vr::Texture_t leftEyeTexture = {(void*)leftEyeTex, vr::API_OpenGL, colorSpace};
-		vr::Texture_t rightEyeTexture = {(void*)rightEyeTex, vr::API_OpenGL, colorSpace};
-		
+
+		vr::Texture_t leftEyeTexture = {(void*)leftEyeTex, vr::TextureType_OpenGL, colorSpace};
+		vr::Texture_t rightEyeTexture = {(void*)rightEyeTex, vr::TextureType_OpenGL, colorSpace};
+
 		vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
 		vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
 
@@ -157,7 +157,7 @@ struct OpenVRApplication
 struct RenderTarget
 {
     gl::Framebuffer fbo;
-    
+
     unsigned int frameWidth; ///< one half the allocated render target width, since we are using side by side stereo
     unsigned int frameHeight;
     unsigned int multisamples;
@@ -253,7 +253,7 @@ int main(void)
 
 		for (int i = 0; i < count; i++)
 		{
-			std::clog << modes[i]<<std::endl;	
+			std::clog << modes[i]<<std::endl;
 		}
 
 	#endif
@@ -315,7 +315,7 @@ int main(void)
 				glfwPollEvents();
 			}
 		}
-		
+
 		vr::VR_Shutdown(); ///\todo if I don't include this here, and just let the destructor handle shutting down VR, the process never terminates correctly, and breaks VR until I reboot.
 
 		glfwDestroyWindow(window);
@@ -324,7 +324,7 @@ int main(void)
 	catch (const std::runtime_error& err)
 	{
 		std::cerr<< err.what() <<std::endl;
-		
+
 #ifdef _WIN32
 		system("pause");
 #endif
