@@ -259,6 +259,10 @@ int main(void)
 			gl::Texture leftEyeTexture;
 			leftEyeTexture.Storage2D(1, GL_RGBA8, vrApp.rtWidth, vrApp.rtHeight);
 
+      m_target = targ;
+      m_target_binding = (GLenum)tbinding_query_enum(m_target);
+      texture_function_dsa(&glTextureStorage2DEXT,&GL_ALT_TexStorage2DFunc,targ,levels,internalformat,width,height);
+
 			gl::Texture rightEyeTexture;
 			rightEyeTexture.Storage2D(1, GL_RGBA8, vrApp.rtWidth, vrApp.rtHeight);
 
