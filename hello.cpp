@@ -172,19 +172,13 @@ struct BasicRenderTarget : public RenderTarget
 {
     gl::Renderbuffer depthTex;
 
-    void prime(GLuint tex)
-    {
+    void prime(GLuint tex) {
         fbo.Bind(GL_FRAMEBUFFER);
 
-#if GL_ALT_API_NAME == GL_ALT_GLES_API
-        if (multisamples > 1)
-        {
+        if (GL_ALT_API_NAME == GL_ALT_GLES_API and multisamples > 1) {
             glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
                                                  tex, 0, multisamples);
-        }
-        else
-#endif
-        {
+        } else {
             fbo.Texture(GL_COLOR_ATTACHMENT0, tex, 0);
         }
 
@@ -197,16 +191,11 @@ struct BasicRenderTarget : public RenderTarget
     {
         const GLenum depthFormat = GL_DEPTH_COMPONENT24;
 
-#if GL_ALT_API_NAME == GL_ALT_GLES_API
-        if (multisamples > 1)
-        {
+        if (GL_ALT_API_NAME == GL_ALT_GLES_API and multisamples > 1) {
             std::clog<<"Side by side with multisamples : "<<multisamples<<std::endl;
             depthTex.Bind();
             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER, multisamples, depthFormat, width, height);
-        }
-        else
-#endif
-        {
+        } else {
             std::clog<<"Side by side without multisampling"<<std::endl;
             depthTex.Storage(depthFormat, width, height);
         }
