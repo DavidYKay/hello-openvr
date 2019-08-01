@@ -1,0 +1,3 @@
+[submodule "glhpp"]
+	path = glhpp
+	url = git@github.com:VirtuosoChris/glhpp.git
