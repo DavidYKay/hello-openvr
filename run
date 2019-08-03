@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "===================="
+echo "Compile"
+echo "===================="
+echo ""
+ninja -C build 
+#scons
+
+if [ $? -eq 0 ]; then
+  echo "===================="
+  echo "Run"
+  echo "===================="
+  echo ""
+  build/main
+else
+  RED='\033[0;31m'
+  NC='\033[0m' # No Color
+  echo ""
+  printf "${RED}^^^^^^\nCompiler Error${NC}\n"
+fi
