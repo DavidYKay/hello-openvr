@@ -37,6 +37,11 @@ depfilament = declare_dependency(
 
 openvr = declare_dependency(
   compile_args: ['-Wno-all'],
+  dependencies : [
+     cc.find_library('openvr_api', dirs:[
+       '/home/dk/workspace/current/hello-openvr/openvr/lib/linux64',
+     ]),
+  ],
   include_directories: include_directories(
     'openvr/headers'
    )
@@ -61,6 +66,10 @@ helloopenvr = executable('main', cpp_sources,
     glhpp,
     openvr,
     dependency('GL'),
+    dependency('glfw3'),
+
+    #dependency('glu'),
+    #dependency('glew'),
     #dependency('pthread'),
     #dependency('SDL2'),
   ],

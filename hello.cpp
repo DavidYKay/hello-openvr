@@ -5,9 +5,9 @@
 #define GL_ALT_GL_API 1
 #define GL_ALT_GLES_API 2
 
-#include <glalt/gl4.5.h>	// opengl api
+#include <glalt/gl4.5.h>  // opengl api
 #include <glalt/glext.h>
-#include <opengl.hpp>		// object oriented bindings
+#include <opengl.hpp>    // object oriented bindings
 
 #include <GLFW/glfw3.h>
 #include <openvr.h>
@@ -19,136 +19,136 @@
 
 static void error_callback(int error, const char* description)
 {
-	std::cerr<< "Error " << error << " : " << description << std::endl;
+  std::cerr<< "Error " << error << " : " << description << std::endl;
 }
 
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
+  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
 
 std::ostream& operator<<(std::ostream& str, const GLFWvidmode& vidmode)
 {
-	str << "\n{ // GLFWvidmode \n";
-	str << "\twidth = " << vidmode.width <<'\n';
-	str << "\theight = " << vidmode.height <<'\n';
-	str << "\tredBits = " << vidmode.redBits<<'\n';
-	str << "\tgreenBits = "<< vidmode.greenBits<<'\n';
-	str << "\tblueBits = "<< vidmode.blueBits<<'\n';
-	str << "\trefreshRate = "<<vidmode.refreshRate<<'\n';
-	str << "\n}\n" << std::endl;
+  str << "\n{ // GLFWvidmode \n";
+  str << "\twidth = " << vidmode.width <<'\n';
+  str << "\theight = " << vidmode.height <<'\n';
+  str << "\tredBits = " << vidmode.redBits<<'\n';
+  str << "\tgreenBits = "<< vidmode.greenBits<<'\n';
+  str << "\tblueBits = "<< vidmode.blueBits<<'\n';
+  str << "\trefreshRate = "<<vidmode.refreshRate<<'\n';
+  str << "\n}\n" << std::endl;
 
-	return str;
+  return str;
 }
 
 
 std::string GetTrackedDeviceString( vr::IVRSystem *pHmd, vr::TrackedDeviceIndex_t unDevice, vr::TrackedDeviceProperty prop, vr::TrackedPropertyError *peError = NULL )
 {
-	uint32_t unRequiredBufferLen = pHmd->GetStringTrackedDeviceProperty( unDevice, prop, NULL, 0, peError );
-	if( unRequiredBufferLen == 0 )
-		return "";
+  uint32_t unRequiredBufferLen = pHmd->GetStringTrackedDeviceProperty( unDevice, prop, NULL, 0, peError );
+  if( unRequiredBufferLen == 0 )
+    return "";
 
-	char *pchBuffer = new char[ unRequiredBufferLen ];
-	unRequiredBufferLen = pHmd->GetStringTrackedDeviceProperty( unDevice, prop, pchBuffer, unRequiredBufferLen, peError );
-	std::string sResult = pchBuffer;
-	delete [] pchBuffer;
-	return sResult;
+  char *pchBuffer = new char[ unRequiredBufferLen ];
+  unRequiredBufferLen = pHmd->GetStringTrackedDeviceProperty( unDevice, prop, pchBuffer, unRequiredBufferLen, peError );
+  std::string sResult = pchBuffer;
+  delete [] pchBuffer;
+  return sResult;
 }
 
 
 struct OpenVRApplication
 {
-	vr::IVRSystem* hmd;
-	uint32_t rtWidth;
-	uint32_t rtHeight;
+  vr::IVRSystem* hmd;
+  uint32_t rtWidth;
+  uint32_t rtHeight;
 
-	OpenVRApplication() :
-		hmd(NULL),
-		rtWidth(0), rtHeight(0)
-	{
-		if (!hmdIsPresent())
-		{
-			throw std::runtime_error("Error : HMD not detected on the system");
-		}
+  OpenVRApplication() :
+    hmd(NULL),
+    rtWidth(0), rtHeight(0)
+  {
+    if (!hmdIsPresent())
+    {
+      throw std::runtime_error("Error : HMD not detected on the system");
+    }
 
-		if (!vr::VR_IsRuntimeInstalled())
-		{
-			throw std::runtime_error("Error : OpenVR Runtime not detected on the system");
-		}
+    if (!vr::VR_IsRuntimeInstalled())
+    {
+      throw std::runtime_error("Error : OpenVR Runtime not detected on the system");
+    }
 
-		initVR();
+    initVR();
 
-		if (!vr::VRCompositor())
-		{
-			throw std::runtime_error("Unable to initialize VR compositor!\n ");
-		}
+    if (!vr::VRCompositor())
+    {
+      throw std::runtime_error("Unable to initialize VR compositor!\n ");
+    }
 
-		hmd->GetRecommendedRenderTargetSize(&rtWidth, &rtHeight);
+    hmd->GetRecommendedRenderTargetSize(&rtWidth, &rtHeight);
 
-		std::clog<<"Initialized HMD with suggested render target size : " << rtWidth << "x" << rtHeight << std::endl;
-	}
+    std::clog<<"Initialized HMD with suggested render target size : " << rtWidth << "x" << rtHeight << std::endl;
+  }
 
-	/// returns if the system believes there is an HMD present without initializing all of OpenVR
-	inline static bool hmdIsPresent()
-	{
-		return vr::VR_IsHmdPresent();
-	}
+  /// returns if the system believes there is an HMD present without initializing all of OpenVR
+  inline static bool hmdIsPresent()
+  {
+    return vr::VR_IsHmdPresent();
+  }
 
-	virtual ~OpenVRApplication()
-	{
-		if (hmd)
-		{
-			vr::VR_Shutdown();
-			hmd = NULL;
-		}
-	}
+  virtual ~OpenVRApplication()
+  {
+    if (hmd)
+    {
+      vr::VR_Shutdown();
+      hmd = NULL;
+    }
+  }
 
-	void submitFramesOpenGL(GLint leftEyeTex, GLint rightEyeTex, bool linear = false)
-	{
-		if (!hmd)
-		{
-			throw std::runtime_error("Error : presenting frames when VR system handle is NULL");
-		}
+  void submitFramesOpenGL(GLint leftEyeTex, GLint rightEyeTex, bool linear = false)
+  {
+    if (!hmd)
+    {
+      throw std::runtime_error("Error : presenting frames when VR system handle is NULL");
+    }
 
-		vr::TrackedDevicePose_t trackedDevicePose[vr::k_unMaxTrackedDeviceCount];
-		vr::VRCompositor()->WaitGetPoses(trackedDevicePose, vr::k_unMaxTrackedDeviceCount, nullptr, 0);
+    vr::TrackedDevicePose_t trackedDevicePose[vr::k_unMaxTrackedDeviceCount];
+    vr::VRCompositor()->WaitGetPoses(trackedDevicePose, vr::k_unMaxTrackedDeviceCount, nullptr, 0);
 
-		///\todo the documentation on this is completely unclear.  I have no idea which one is correct...
-		/// seems to imply that we always want Gamma in opengl because linear is for framebuffers that have been
-		/// processed by DXGI...
-		vr::EColorSpace colorSpace = linear ? vr::ColorSpace_Linear : vr::ColorSpace_Gamma;
+    ///\todo the documentation on this is completely unclear.  I have no idea which one is correct...
+    /// seems to imply that we always want Gamma in opengl because linear is for framebuffers that have been
+    /// processed by DXGI...
+    vr::EColorSpace colorSpace = linear ? vr::ColorSpace_Linear : vr::ColorSpace_Gamma;
 
-		vr::Texture_t leftEyeTexture = {(void*)leftEyeTex, vr::TextureType_OpenGL, colorSpace};
-		vr::Texture_t rightEyeTexture = {(void*)rightEyeTex, vr::TextureType_OpenGL, colorSpace};
+    vr::Texture_t leftEyeTexture = {(void*)leftEyeTex, vr::TextureType_OpenGL, colorSpace};
+    vr::Texture_t rightEyeTexture = {(void*)rightEyeTex, vr::TextureType_OpenGL, colorSpace};
 
-		vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
-		vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
+    vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
+    vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
 
-		vr::VRCompositor()->PostPresentHandoff();
-	}
+    vr::VRCompositor()->PostPresentHandoff();
+  }
 
-	void handleVRError(vr::EVRInitError err)
-	{
-		throw std::runtime_error(vr::VR_GetVRInitErrorAsEnglishDescription(err));
-	}
+  void handleVRError(vr::EVRInitError err)
+  {
+    throw std::runtime_error(vr::VR_GetVRInitErrorAsEnglishDescription(err));
+  }
 
-	void initVR()
-	{
-		vr::EVRInitError err = vr::VRInitError_None;
-		hmd = vr::VR_Init(&err, vr::VRApplication_Scene);
+  void initVR()
+  {
+    vr::EVRInitError err = vr::VRInitError_None;
+    hmd = vr::VR_Init(&err, vr::VRApplication_Scene);
 
-		if (err != vr::VRInitError_None)
-		{
-			handleVRError(err);
-		}
+    if (err != vr::VRInitError_None)
+    {
+      handleVRError(err);
+    }
 
-		std::clog << GetTrackedDeviceString( hmd, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String ) << std::endl;
-		std::clog << GetTrackedDeviceString( hmd, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_SerialNumber_String ) << std::endl;
+    std::clog << GetTrackedDeviceString( hmd, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String ) << std::endl;
+    std::clog << GetTrackedDeviceString( hmd, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_SerialNumber_String ) << std::endl;
 
-	}
+  }
 };
 
 
@@ -176,8 +176,9 @@ struct BasicRenderTarget : public RenderTarget
         fbo.Bind(GL_FRAMEBUFFER);
 
         if (GL_ALT_API_NAME == GL_ALT_GLES_API and multisamples > 1) {
-            glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                                                 tex, 0, multisamples);
+            // TODO: restore this
+            // glFramebufferTexture2DMultisampleEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0, multisamples);
+            glFramebufferTexture2DEXT(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
         } else {
             fbo.Texture(GL_COLOR_ATTACHMENT0, tex, 0);
         }
@@ -211,122 +212,124 @@ struct BasicRenderTarget : public RenderTarget
 
 int main(void)
 {
-	try
-	{
-		GLFWwindow* window;
+  try
+  {
+    GLFWwindow* window;
 
-		glfwSetErrorCallback(error_callback);
+    glfwSetErrorCallback(error_callback);
 
-		if (!glfwInit())
-		{
-			exit(EXIT_FAILURE);
-		}
+    if (!glfwInit())
+    {
+      exit(EXIT_FAILURE);
+    }
 
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 
-		OpenVRApplication vrApp;
+    OpenVRApplication vrApp;
 
-		window = glfwCreateWindow(vrApp.rtWidth, vrApp.rtHeight, "Hello GLFW", NULL, NULL);
+    window = glfwCreateWindow(vrApp.rtWidth, vrApp.rtHeight, "Hello GLFW", NULL, NULL);
 
-		if (!window)
-		{
-			glfwTerminate();
-			exit(EXIT_FAILURE);
-		}
+    if (!window)
+    {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
+    }
 
-	#ifdef LOG_FORMATS
+  #ifdef LOG_FORMATS
 
-		int count;
-		const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
+    int count;
+    const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
 
-		for (int i = 0; i < count; i++)
-		{
-			std::clog << modes[i]<<std::endl;
-		}
+    for (int i = 0; i < count; i++)
+    {
+      std::clog << modes[i]<<std::endl;
+    }
 
-	#endif
+  #endif
 
-		glfwSetKeyCallback(window, key_callback);
+    glfwSetKeyCallback(window, key_callback);
 
-		glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);
 
-		glfwSwapInterval(0);
+    glfwSwapInterval(0);
 
-		glClearColor (0.0f, 0.0f, 1.0f, 1.0f);
+    glClearColor (0.0f, 0.0f, 1.0f, 1.0f);
 
-		{
-			gl::Texture leftEyeTexture;
-			leftEyeTexture.Storage2D(1, GL_RGBA8, vrApp.rtWidth, vrApp.rtHeight);
+    {
+      gl::Texture leftEyeTexture;
+      leftEyeTexture.Storage2D(1, GL_RGBA8, vrApp.rtWidth, vrApp.rtHeight);
 
-      m_target = targ;
-      m_target_binding = (GLenum)tbinding_query_enum(m_target);
-      texture_function_dsa(&glTextureStorage2DEXT,&GL_ALT_TexStorage2DFunc,targ,levels,internalformat,width,height);
+      // TODO: how is this supposed to work?
+      //m_target = targ;
+      //m_target_binding = (GLenum)tbinding_query_enum(m_target);
+      // TODO: are we using the right width and height?
+      //texture_function_dsa(&glTextureStorage2DEXT,&GL_ALT_TexStorage2DFunc,targ,levels,internalformat, vrApp.rtWidth, vrApp.rtHeight);
 
-			gl::Texture rightEyeTexture;
-			rightEyeTexture.Storage2D(1, GL_RGBA8, vrApp.rtWidth, vrApp.rtHeight);
+      gl::Texture rightEyeTexture;
+      rightEyeTexture.Storage2D(1, GL_RGBA8, vrApp.rtWidth, vrApp.rtHeight);
 
-			BasicRenderTarget leftRT(1, vrApp.rtWidth, vrApp.rtHeight);
-			BasicRenderTarget rightRT(1, vrApp.rtWidth, vrApp.rtHeight);
+      BasicRenderTarget leftRT(1, vrApp.rtWidth, vrApp.rtHeight);
+      BasicRenderTarget rightRT(1, vrApp.rtWidth, vrApp.rtHeight);
 
-			leftRT.prime(leftEyeTexture.name);
-			rightRT.prime(rightEyeTexture.name);
+      leftRT.prime(leftEyeTexture.name);
+      rightRT.prime(rightEyeTexture.name);
 
-			glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-			leftRT.fbo.Bind(GL_FRAMEBUFFER);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+      leftRT.fbo.Bind(GL_FRAMEBUFFER);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			{
-				throw std::runtime_error("left rt incomplete");
-			}
+      if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+      {
+        throw std::runtime_error("left rt incomplete");
+      }
 
-			glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-			rightRT.fbo.Bind(GL_FRAMEBUFFER);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+      rightRT.fbo.Bind(GL_FRAMEBUFFER);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			{
-				throw std::runtime_error("right rt incomplete");
-			}
+      if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+      {
+        throw std::runtime_error("right rt incomplete");
+      }
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			glClearColor (0.0f, 0.0f, 1.0f, 1.0f);
+      glClearColor (0.0f, 0.0f, 1.0f, 1.0f);
 
-			while (!glfwWindowShouldClose(window))
-			{
-				int width, height;
-				glfwGetFramebufferSize(window, &width, &height);
+      while (!glfwWindowShouldClose(window))
+      {
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
 
-				glViewport(0, 0, width, height);
-				glClear(GL_COLOR_BUFFER_BIT);
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-				vrApp.submitFramesOpenGL(leftEyeTexture.name, rightEyeTexture.name);
+        vrApp.submitFramesOpenGL(leftEyeTexture.name, rightEyeTexture.name);
 
-				glfwSwapBuffers(window);
-				glfwPollEvents();
-			}
-		}
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+      }
+    }
 
-		vr::VR_Shutdown(); ///\todo if I don't include this here, and just let the destructor handle shutting down VR, the process never terminates correctly, and breaks VR until I reboot.
+    vr::VR_Shutdown(); ///\todo if I don't include this here, and just let the destructor handle shutting down VR, the process never terminates correctly, and breaks VR until I reboot.
 
-		glfwDestroyWindow(window);
-		glfwTerminate();
-	}
-	catch (const std::runtime_error& err)
-	{
-		std::cerr<< err.what() <<std::endl;
+    glfwDestroyWindow(window);
+    glfwTerminate();
+  }
+  catch (const std::runtime_error& err)
+  {
+    std::cerr<< err.what() <<std::endl;
 
 #ifdef _WIN32
-		system("pause");
+    system("pause");
 #endif
 
-		exit(EXIT_FAILURE);
-	}
+    exit(EXIT_FAILURE);
+  }
 
 
-	std::clog <<" End" << std::endl;
-	exit(EXIT_SUCCESS);
-	return 0;
+  std::clog <<" End" << std::endl;
+  exit(EXIT_SUCCESS);
+  return 0;
 }
